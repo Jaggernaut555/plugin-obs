@@ -83,6 +83,29 @@ const mapSources = async () => {
     });
 
     sources[source.name] = assignment;
+
+    // Line 87 of index.ts on the obs plugin
+    // get audio monitor filters
+    obs.send("GetSourceFilters", {sourceName: source.name}).then((filterData) => {
+      let amFilters: any[] = filterData.filters.filter((f:any) => f.type == "audio_monitor");
+      amFilters.forEach((f) => {
+          let name = source.name + ": " + f.name;
+          const filterAssignment = new Assignment(name, {
+            name: name,
+            muted,
+            volume: (f.settings.volume / 100) // it uses 0-100
+          })
+          filterAssignment.on("volumeChanged", (level: number) => {
+            obs.send("SetSourceFilterSettings", {
+              sourceName: source.name,
+              filterName: f.name,
+              filterSettings: {
+                volume: (level * 100),
+              }
+            });
+          });
+    })
+})
   });
 };
 
