@@ -84,7 +84,6 @@ const mapSources = async () => {
 
     sources[source.name] = assignment;
 
-    // Line 87 of index.ts on the obs plugin
     // get audio monitor filters
     obs.send("GetSourceFilters", {sourceName: source.name}).then((filterData) => {
       let amFilters: any[] = filterData.filters.filter((f:any) => f.type == "audio_monitor");
@@ -104,8 +103,8 @@ const mapSources = async () => {
               }
             });
           });
+      })
     })
-})
   });
 };
 
